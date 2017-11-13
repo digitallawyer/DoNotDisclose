@@ -113,6 +113,10 @@ bot.dialog('Unilateral', [
     },
     function (session, results) {
         session.dialogData.time = builder.EntityRecognizer.resolveTime([results.response]);
+        builder.Prompts.text(session, "What is your email address?"); 
+    },
+    function (session, results) {
+        session.userData.email = results.response;
         session.send("Ok, I am generating the unilateral NDA for " + session.userData.name + " with effective date " + session.dialogData.time.toString(0,14).substring(0,15) + 
                     ". You will receive an email with this document shortly.");
 
@@ -163,7 +167,7 @@ bot.dialog('Unilateral', [
  
         client.sendEmail({
             "From": "info@legal.io", 
-            "To": "pietergunst@gmail.com", 
+            "To": session.userData.email, 
             "Subject": "Your NDA is attached", 
             "TextBody": "Your NDA",
             "Attachments": [{
