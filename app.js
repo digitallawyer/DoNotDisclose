@@ -169,6 +169,9 @@ bot.dialog('Unilateral', [
             "To": session.userData.email, 
             "Subject": "Your NDA is attached", 
             "TextBody": "Your NDA",
+            "TemplateModel": {
+
+            },
             "TemplateId": 3892923,
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
