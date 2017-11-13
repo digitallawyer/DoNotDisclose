@@ -170,7 +170,7 @@ bot.dialog('Unilateral', [
               // Reading synchronously here to condense code snippet: 
               "Content": __dirname + '/output.docx',
               "Name": "output.docx",
-              "ContentType": "image/jpeg"
+              "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
         }, function(error, result) {
             if(error) {
