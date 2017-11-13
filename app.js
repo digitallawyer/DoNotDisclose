@@ -69,11 +69,11 @@ bot.on('conversationUpdate', function (message) {
 
 bot.dialog('/', [
     function (session, args, next) {
-        session.send("Hi! I will help you draft a non-disclosure agreement. There are different types of NDA's, depending on the circumstances. If only one party is disclosing information, the NDA is *unilateral*. If both parties want to protect their informatino, the NDA is *mutual*.");
+        session.send("Hi! I will help you draft a non-disclosure agreement. Please keep in mind that I am just a bot. Consult an attorney for legal advice. NDA's can be **unilateral** or **mutual**, depending on whether only one or both parties information is protected.");
         session.sendTyping();
        
         setTimeout(function(){ 
-            builder.Prompts.choice(session, "What type of non-disclosure agreement are you looking to create?", "Unilateral NDA|Mutual NDA", { maxRetries:0, listStyle: builder.ListStyle.button }); 
+            builder.Prompts.choice(session, "What type of non-disclosure agreement would you like to create?", "Unilateral NDA|Mutual NDA", { maxRetries:0, listStyle: builder.ListStyle.button }); 
         }, 2000);
     },
     function (session, results) { 
