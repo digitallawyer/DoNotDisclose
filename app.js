@@ -19,6 +19,8 @@ var nodemailer = require('nodemailer');
 var postmark = require("postmark");
 var client = new postmark.Client("ec9e829d-0841-4255-935f-a9f6dc22a725");
 
+var Mixpanel = require('mixpanel');
+
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -33,6 +35,11 @@ var connector = new builder.ChatConnector({
     // appPassword: "1zf9ijdJWHBqnbCObKjreEq",
     stateEndpoint: process.env.BotStateEndpoint,
     openIdMetadata: process.env.BotOpenIdMetadata 
+});
+
+// initialize mixpanel client configured to communicate over https 
+var mixpanel = Mixpanel.init('bd42ba875260b2692f69046f0a9e60ac', {
+    protocol: 'https'
 });
 
 // Listen for messages from users 
@@ -95,6 +102,7 @@ bot.dialog('Unilateral', [
         session.sendTyping();
         setTimeout(function(){
             session.send("Ok, I will help you generate a unilateral non-disclosure agreement.");
+            mixpanel.track("Workflow Started"); 
             session.sendTyping();
         }, 2000);
         setTimeout(function(){ 
@@ -118,6 +126,7 @@ bot.dialog('Unilateral', [
     function (session, results) {
         session.userData.email = results.response;
         session.send("Okay, I’m generating the unilateral NDA. You’ll receive an email with this document shortly.");
+        mixpanel.track("Workflow Completed"); 
 
 
         //Load the docx file as a binary
