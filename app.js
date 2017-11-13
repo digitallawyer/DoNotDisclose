@@ -133,7 +133,7 @@ bot.dialog('Unilateral', [
         doc.setData({
             company_name: session.userData.name,
             address: session.userData.address,
-            time: session.dialogData.time.toString(0,14).substring(0,15),
+            time: session.dialogData.time.toString(0,10).substring(0,10),
             description: 'New Website'
         });
 
@@ -168,7 +168,6 @@ bot.dialog('Unilateral', [
             "From": "info@legal.io", 
             "To": session.userData.email, 
             "TemplateModel": {
-
             },
             "TemplateId": 3892923,
             "Attachments": [{
