@@ -157,7 +157,7 @@ bot.dialog('Unilateral', [
                      .generate({type: 'nodebuffer'});
 
         // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-        fs.writeFileSync(path.resolve(__dirname, 'output.docx'), buf);
+        fs.writeFileSync(path.resolve(__dirname, 'nda.docx'), buf);
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
@@ -173,8 +173,8 @@ bot.dialog('Unilateral', [
             "TemplateId": 3892923,
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
-              "Content": fs.readFileSync(__dirname + '/output.docx').toString('base64'),
-              "Name": "output.docx",
+              "Content": fs.readFileSync(__dirname + '/nda.docx').toString('base64'),
+              "Name": "nda.docx",
               "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
         }, function(error, result) {
@@ -210,8 +210,8 @@ bot.dialog('Unilateral', [
                 attachments: [
                     // File Stream attachment
                     {
-                        filename: 'output.docx',
-                        path: __dirname + '/output.docx',
+                        filename: 'nda.docx',
+                        path: __dirname + '/nda.docx',
                         cid: 'nyan@example.com' // should be as unique as possible
                     }
                 ]                
@@ -317,7 +317,7 @@ bot.dialog('Mutual', [
                      .generate({type: 'nodebuffer'});
 
         // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-        fs.writeFileSync(path.resolve(__dirname, 'output.docx'), buf);
+        fs.writeFileSync(path.resolve(__dirname, 'nda.docx'), buf);
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
@@ -345,8 +345,8 @@ bot.dialog('Mutual', [
                 attachments: [
                     // File Stream attachment
                     {
-                        filename: 'output.docx',
-                        path: __dirname + '/output.docx',
+                        filename: 'nda.docx',
+                        path: __dirname + '/nda.docx',
                         cid: 'nyan@example.com' // should be as unique as possible
                     }
                 ]                
