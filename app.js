@@ -163,7 +163,7 @@ bot.dialog('Unilateral', [
  
         client.sendEmail({
             "From": "info@legal.io", 
-            "To": "target@example.us", 
+            "To": "pietergunst@gmail.com", 
             "Subject": "Your NDA is attached", 
             "TextBody": "Your NDA",
             "Attachments": [{
