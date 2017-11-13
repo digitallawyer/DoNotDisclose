@@ -157,7 +157,7 @@ bot.dialog('Unilateral', [
                      .generate({type: 'nodebuffer'});
 
         // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-        fs.writeFileSync(path.resolve(__dirname, 'output.docx'), buf);
+        fs.writeFileSync(path.resolve(__dirname, session.userData.name + ".docx"), buf);
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
@@ -173,8 +173,8 @@ bot.dialog('Unilateral', [
             "TemplateId": 3892923,
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
-              "Content": fs.readFileSync(__dirname + '/output.docx').toString('base64'),
-              "Name": "output.docx",
+              "Content": fs.readFileSync(__dirname + session.userData.name + ".docx").toString('base64'),
+              "Name": session.userData.name + ".docx",
               "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
         }, function(error, result) {
