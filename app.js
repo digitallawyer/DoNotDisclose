@@ -75,7 +75,7 @@ bot.dialog('/', [
         session.sendTyping();
        
         setTimeout(function(){ 
-            builder.Prompts.choice(session, "First things first, NDA’s can be unilateral or mutual, depending on whether only one or both parties information is protected. What type of non-disclosure would you like to create?", "Unilateral NDA|Mutual NDA", { maxRetries:0, listStyle: builder.ListStyle.button }); 
+            builder.Prompts.choice(session, "First things first, NDA’s can be **unilateral** or **mutual**, depending on whether only one or both parties information is protected. What type of NDA would you like to create?", "Unilateral NDA|Mutual NDA", { maxRetries:0, listStyle: builder.ListStyle.button }); 
         }, 2000);
     },
     function (session, results) { 
@@ -169,6 +169,7 @@ bot.dialog('Unilateral', [
             "To": session.userData.email, 
             "Subject": "Your NDA is attached", 
             "TextBody": "Your NDA",
+            "TemplateId": 3892923,
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
               "Content": fs.readFileSync(__dirname + '/output.docx').toString('base64'),
