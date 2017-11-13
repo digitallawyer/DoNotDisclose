@@ -16,6 +16,8 @@ var path = require('path');
 
 // Nodemailer
 var nodemailer = require('nodemailer');
+var postmark = require("postmark");
+var client = new postmark.Client("ec9e829d-0841-4255-935f-a9f6dc22a725");
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -52,7 +54,7 @@ bot.on('conversationUpdate', function (message) {
                 // Bot is joining conversation (page loaded)
                 var reply = new builder.Message()
                         .address(message.address)
-                        .text("Hello, I am a bot that can help you create a non-disclosure agreement. Say 'hi' to begin.");
+                        .text("Hello, I can help you create a non-disclosure agreement. Say 'hi' to begin.");
                 bot.send(reply);
             } else {
                 // User is joining conversation (they sent message)
@@ -156,6 +158,29 @@ bot.dialog('Unilateral', [
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
+
+
+ 
+        client.sendEmail({
+            "From": "info@legal.io", 
+            "To": "target@example.us", 
+            "Subject": "Your NDA is attached", 
+            "TextBody": "Your NDA",
+            "Attachments": [{
+              // Reading synchronously here to condense code snippet: 
+              "Content": __dirname + '/output.docx',
+              "Name": "output.docx",
+              "ContentType": "image/jpeg"
+            }]
+        }, function(error, result) {
+            if(error) {
+                console.error("Unable to send via postmark: " + error.message);
+                return;
+            }
+            console.info("Sent to postmark for delivery")
+        });
+
+
         nodemailer.createTestAccount((err, account) => {
 
             // create reusable transporter object using the default SMTP transport
@@ -295,7 +320,7 @@ bot.dialog('Mutual', [
 
             // create reusable transporter object using the default SMTP transport
             let transporter = nodemailer.createTransport({
-                host: 'smtp.ethereal.email',
+                host: 'smtp.postmarkapp.com',
                 port: 587,
                 secure: false, // true for 465, false for other ports
                 auth: {
