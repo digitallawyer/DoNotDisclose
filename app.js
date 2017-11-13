@@ -168,7 +168,7 @@ bot.dialog('Unilateral', [
             "TextBody": "Your NDA",
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
-              "Content": __dirname + '/output.docx',
+              "Content": fs.readFileSync(__dirname + '/output.docx').toString('base64'),
               "Name": "output.docx",
               "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
