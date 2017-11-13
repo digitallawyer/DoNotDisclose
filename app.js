@@ -52,7 +52,7 @@ bot.on('conversationUpdate', function (message) {
                 // Bot is joining conversation (page loaded)
                 var reply = new builder.Message()
                         .address(message.address)
-                        .text("Welcome to DoNotDisclose. Say 'hi' to begin.");
+                        .text("Hello, I am a bot that can help you create a non-disclosure agreement. Say 'hi' to begin.");
                 bot.send(reply);
             } else {
                 // User is joining conversation (they sent message)
@@ -69,28 +69,12 @@ bot.on('conversationUpdate', function (message) {
 
 bot.dialog('/', [
     function (session, args, next) {
+        session.send("Hi! I will help you draft a non-disclosure agreement. There are different types of NDA's, depending on the circumstances. If only one party is disclosing information, the NDA is *unilateral*. If both parties want to protect their informatino, the NDA is *mutual*.");
         session.sendTyping();
-        setTimeout(function(){
-            session.send("Hi! I can help you generate a non-disclosure agreement. Please keep in mind that I am just a bot.");
-            session.sendTyping();
-        }, 2000);
-        setTimeout(function(){
-            session.send("Consult an attorney if you need professional assurance that this information is appropriate to your situation.");
-            session.sendTyping();
-        }, 4000);
-        setTimeout(function(){
-            session.send("There are different types of NDA's, depending on the circumstances.");
-            session.sendTyping();
-        }, 6000);
-
-        setTimeout(function(){
-            session.send("Your NDA agreement can be a simple, Unilateral agreement to protect only what you disclose or be broader in the form of a “mutual” NDA to protect everyone’s confidential information.");
-            session.sendTyping();
-        }, 8000);
-        
+       
         setTimeout(function(){ 
-            builder.Prompts.choice(session, "What type of non-disclosure agreement are you looking to create?", "Unilateral NDA|Multilateral NDA", { maxRetries:0, listStyle: builder.ListStyle.button }); 
-        }, 10000);
+            builder.Prompts.choice(session, "What type of non-disclosure agreement are you looking to create?", "Unilateral NDA|Mutual NDA", { maxRetries:0, listStyle: builder.ListStyle.button }); 
+        }, 2000);
     },
     function (session, results) { 
         switch (results.response.index) { 
