@@ -102,7 +102,9 @@ bot.dialog('Unilateral', [
         session.sendTyping();
         setTimeout(function(){
             session.send("Ok, I will help you generate a unilateral non-disclosure agreement.");
-            mixpanel.track("Workflow Started"); 
+            mixpanel.track("Workflow Started"), {
+                "Bot": "NDA"
+            }; 
             session.sendTyping();
         }, 2000);
         setTimeout(function(){ 
@@ -126,7 +128,10 @@ bot.dialog('Unilateral', [
     function (session, results) {
         session.userData.email = results.response;
         session.send("Okay, I’m generating the unilateral NDA. You’ll receive an email with this document shortly.");
-        mixpanel.track("Workflow Completed"); 
+        mixpanel.track("Workflow Completed"), {
+                "Bot": "NDA",
+                "Type": "Unilateral"
+            }; 
 
 
         //Load the docx file as a binary
