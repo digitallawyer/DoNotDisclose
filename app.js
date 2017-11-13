@@ -117,8 +117,7 @@ bot.dialog('Unilateral', [
     },
     function (session, results) {
         session.userData.email = results.response;
-        session.send("Ok, I am generating the unilateral NDA for " + session.userData.name + " with effective date " + session.dialogData.time.toString(0,14).substring(0,15) + 
-                    ". You will receive an email with this document shortly.");
+        session.send("Okay, I’m generating the unilateral NDA. You’ll receive an email with this document shortly.");
 
 
         //Load the docx file as a binary
