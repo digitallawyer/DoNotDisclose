@@ -17,7 +17,7 @@ var path = require('path');
 // Nodemailer
 var nodemailer = require('nodemailer');
 var postmark = require("postmark");
-var client = new postmark.Client("ec9e829d-0841-4255-935f-a9f6dc22a725");
+var client = new postmark.Client("df1b33912e609ec122754bf5c2c0e450");
 
 var Mixpanel = require('mixpanel');
 
