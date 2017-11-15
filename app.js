@@ -186,7 +186,7 @@ bot.dialog('Unilateral', [
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
               "Content": fs.readFileSync(__dirname + '/nda-unilateral-' + session.userData.email +'.docx').toString('base64'),
-              "Name": "nda-unilateral.docx",
+              "Name": 'nda-unilateral-' + session.userData.email +'.docx',
               "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
         }, function(error, result) {
