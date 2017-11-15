@@ -136,7 +136,7 @@ bot.dialog('Unilateral', [
 
         //Load the docx file as a binary
         var content = fs
-            .readFileSync(path.resolve(__dirname, 'input.docx'), 'binary');
+            .readFileSync(path.resolve(__dirname, 'nda-unilateral.docx'), 'binary');
 
         var zip = new JSZip(content);
 
@@ -148,7 +148,6 @@ bot.dialog('Unilateral', [
             company_name: session.userData.name,
             address: session.userData.address,
             time: session.dialogData.time.toString(0,10).substring(0,10),
-            description: 'New Website'
         });
 
         try {
