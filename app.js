@@ -271,7 +271,10 @@ bot.dialog('Mutual', [
     function (session, args, next) {
         session.sendTyping();
         setTimeout(function(){
-            session.send("Ok, I will help you generate a mutual NDA.");
+            session.send("Ok, I will help you generate a mutual non-disclosure agreement.");
+            mixpanel.track("Workflow Started"), {
+                "Bot": "NDA"
+            }; 
             session.sendTyping();
         }, 2000);
     },
