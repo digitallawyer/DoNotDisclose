@@ -17,7 +17,7 @@ var path = require('path');
 // Nodemailer
 var nodemailer = require('nodemailer');
 var postmark = require("postmark");
-var client = new postmark.Client("ec9e829d-0841-4255-935f-a9f6dc22a725");
+var client = new postmark.Client(process.env.PostmarkAppID);
 
 var Mixpanel = require('mixpanel');
 
@@ -214,7 +214,7 @@ bot.dialog('Unilateral', [
 
             // setup email data with unicode symbols
             let mailOptions = {
-                from: '"DoNotDisclose" <info@DoNotDisclose.com>', // sender address
+                from: '"Legal.io" <reply@legal.io>', // sender address
                 to: 'pietergunst@gmail.com', // list of receivers
                 subject: 'Your NDA from DoNotDisclose.com', // Subject line
                 text: 'Your NDA from DoNotDisclose.com', // plain text body
