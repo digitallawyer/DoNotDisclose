@@ -136,7 +136,7 @@ bot.dialog('Unilateral', [
 
         //Load the docx file as a binary
         var content = fs
-            .readFileSync(path.resolve(__dirname, 'input.docx'), 'binary');
+            .readFileSync(path.resolve(__dirname, 'nda-unilateral.docx'), 'binary');
 
         var zip = new JSZip(content);
 
@@ -271,7 +271,7 @@ bot.dialog('Mutual', [
     function (session, args, next) {
         session.sendTyping();
         setTimeout(function(){
-            session.send("Ok, I will help you generate a unilateral NDA.");
+            session.send("Ok, I will help you generate a mutual NDA.");
             session.sendTyping();
         }, 2000);
     },
@@ -285,17 +285,25 @@ bot.dialog('Mutual', [
 
     function (session, results) {
         session.userData.address = results.response;
-        builder.Prompts.time(session, "What is the effective date of the agreement?"); 
+        console.log(session.userData.address)
+        builder.Prompts.time(session, "What date should this agreement start?"); 
     },
     function (session, results) {
         session.dialogData.time = builder.EntityRecognizer.resolveTime([results.response]);
-        session.send("Ok, I am generating the unilateral NDA for " + session.userData.name + 
-                    ". You will receive an email with this document shortly.");
+        builder.Prompts.text(session, "What is your email address?"); 
+    },
+    function (session, results) {
+        session.userData.email = results.response;
+        session.send("Okay, I’m generating the mutual NDA. You’ll receive an email with this document shortly.");
+        mixpanel.track("Workflow Completed"), {
+                "Bot": "NDA",
+                "Type": "Mutual"
+            }; 
 
 
         //Load the docx file as a binary
         var content = fs
-            .readFileSync(path.resolve(__dirname, 'input.docx'), 'binary');
+            .readFileSync(path.resolve(__dirname, 'nda-mutual.docx'), 'binary');
 
         var zip = new JSZip(content);
 
