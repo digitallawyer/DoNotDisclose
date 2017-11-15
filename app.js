@@ -78,6 +78,9 @@ bot.on('conversationUpdate', function (message) {
 
 bot.dialog('/', [
     function (session, args, next) {
+        mixpanel.track("Workflow Started"), {
+            "Bot": "NDA"
+        }; 
         session.send("Hi! I'm here to help you draft a non-disclosure agreement. Keep in mind that I'm just a bot, and you should consult with an attorney for legal advice.");
         session.sendTyping();
        
@@ -102,9 +105,6 @@ bot.dialog('Unilateral', [
         session.sendTyping();
         setTimeout(function(){
             session.send("Ok, I will help you generate a unilateral non-disclosure agreement.");
-            mixpanel.track("Workflow Started"), {
-                "Bot": "NDA"
-            }; 
             session.sendTyping();
         }, 2000);
         setTimeout(function(){ 
@@ -204,31 +204,41 @@ bot.dialog('Mutual', [
     function (session, args, next) {
         session.sendTyping();
         setTimeout(function(){
-            session.send("Ok, I will help you generate a unilateral NDA.");
+            session.send("Ok, I will help you generate a mutual non-disclosure agreement.");
+            mixpanel.track("Workflow Started"), {
+                "Bot": "NDA"
+            }; 
             session.sendTyping();
         }, 2000);
-    },
-    function (session) {
-        builder.Prompts.text(session, "What is the full legal name of the company that is disclosing information? (For Example: Do Not Disclose, LLC)");
+        setTimeout(function(){ 
+            builder.Prompts.text(session, "What is the full legal name of the individual or company that is disclosing information?");
+        }, 4000);
     },
     function (session, results) {
         session.userData.name = results.response;
-        builder.Prompts.number(session, "What is the full street address of " + results.response + "?"); 
+        builder.Prompts.text(session, "What is the full street address of " + results.response + "?"); 
     },
 
     function (session, results) {
         session.userData.address = results.response;
-        builder.Prompts.time(session, "What is the effective date of the agreement?"); 
+        console.log(session.userData.address)
+        builder.Prompts.time(session, "What date should this agreement start?"); 
     },
     function (session, results) {
         session.dialogData.time = builder.EntityRecognizer.resolveTime([results.response]);
-        session.send("Ok, I am generating the unilateral NDA for " + session.userData.name + 
-                    ". You will receive an email with this document shortly.");
-
+        builder.Prompts.text(session, "What is your email address?"); 
+    },
+    function (session, results) {
+        session.userData.email = results.response;
+        session.send("Okay, I’m generating the unilateral NDA. You’ll receive an email with this document shortly.");
+        mixpanel.track("Workflow Completed"), {
+                "Bot": "NDA",
+                "Type": "Mutual"
+            }; 
 
         //Load the docx file as a binary
         var content = fs
-            .readFileSync(path.resolve(__dirname, 'input.docx'), 'binary');
+            .readFileSync(path.resolve(__dirname, 'nda-mutual.docx'), 'binary');
 
         var zip = new JSZip(content);
 
@@ -239,8 +249,7 @@ bot.dialog('Mutual', [
         doc.setData({
             company_name: session.userData.name,
             address: session.userData.address,
-            time: session.dialogData.time
-
+            time: session.dialogData.time.toString(0,10).substring(0,10),
         });
 
         try {
@@ -267,70 +276,27 @@ bot.dialog('Mutual', [
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
-        nodemailer.createTestAccount((err, account) => {
-
-            // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-                host: 'smtp.postmarkapp.com',
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                    user: account.user, // generated ethereal user
-                    pass: account.pass  // generated ethereal password
-                }
-            });
-
-            // setup email data with unicode symbols
-            let mailOptions = {
-                from: '"DoNotDisclose" <info@DoNotDisclose.com>', // sender address
-                to: 'pietergunst@gmail.com', // list of receivers
-                subject: 'Your NDA from DoNotDisclose.com', // Subject line
-                text: 'Your NDA from DoNotDisclose.com', // plain text body
-                html: '<b>Your NDA is attached to this email</b>', // html body
-                // An array of attachments
-                attachments: [
-                    // File Stream attachment
-                    {
-                        filename: 'nda.docx',
-                        path: __dirname + '/nda.docx',
-                        cid: 'nyan@example.com' // should be as unique as possible
-                    }
-                ]                
-            };
-
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    return console.log(error);
-                }
-                console.log('Message sent: %s', info.messageId);
-                // Preview only available when sending through an Ethereal account
-                var email_url = nodemailer.getTestMessageUrl(info);
-                setTimeout(function(){
-                    var actionurl = email_url
-                    var card = new builder.ThumbnailCard(session)
-                            .title("Want more options?")
-                            .text("Submit a request online and get contacted by attorneys who can assist.")
-                            .images([
-                                 builder.CardImage.create(session, "https://s3.amazonaws.com/production.lawgives.com/ep/55/f9/55f9f979e4a99419fb000007.jpeg")
-                            ])
-                            // .tap(builder.CardAction.openUrl(session, "https://www.legal.io/intake/new?summary=" + session.dialogData.title + "&location=" + location_uri + ""))
-                            .buttons([
-                                builder.CardAction.openUrl(session, actionurl, "Get Started")
-                            ]);
-                    var msg = new builder.Message(session).attachments([card]);
-                    session.send(msg);
-                }, 4000);
-                // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
-                // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-            });
 
 
-
+ 
+        client.sendEmailWithTemplate({
+            "From": "info@legal.io", 
+            "To": session.userData.email, 
+            "TemplateModel": {
+            },
+            "TemplateId": 3892923,
+            "Attachments": [{
+              // Reading synchronously here to condense code snippet: 
+              "Content": fs.readFileSync(__dirname + '/nda.docx').toString('base64'),
+              "Name": "nda.docx",
+              "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            }]
+        }, function(error, result) {
+            if(error) {
+                console.error("Unable to send via postmark: " + error.message);
+                return;
+            }
+            console.info("Sent to postmark for delivery")
         });
-
-
-
     }
 ]);
-
