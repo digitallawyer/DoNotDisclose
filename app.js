@@ -287,7 +287,7 @@ bot.dialog('Mutual', [
             "TemplateId": 3892923,
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
-              "Content": fs.readFileSync(__dirname, 'nda-mutual-' + session.userData.email +'.docx').toString('base64'),
+              "Content": fs.readFileSync(__dirname, '/nda-mutual-' + session.userData.email +'.docx').toString('base64'),
               "Name": 'nda-mutual-' + session.userData.email +'.docx',
               "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
