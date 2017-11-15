@@ -277,9 +277,9 @@ bot.dialog('Mutual', [
             }; 
             session.sendTyping();
         }, 2000);
-    },
-    function (session) {
-        builder.Prompts.text(session, "What is the full legal name of the company that is disclosing information? (For Example: Do Not Disclose, LLC)");
+        setTimeout(function(){ 
+            builder.Prompts.text(session, "What is the full legal name of the individual or company that is disclosing information?");
+        }, 4000);
     },
     function (session, results) {
         session.userData.name = results.response;
