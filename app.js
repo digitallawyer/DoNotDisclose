@@ -197,72 +197,6 @@ bot.dialog('Unilateral', [
             }
             console.info("Sent to postmark for delivery")
         });
-
-
-        nodemailer.createTestAccount((err, account) => {
-
-            // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-                host: 'smtp.ethereal.email',
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                    user: account.user, // generated ethereal user
-                    pass: account.pass  // generated ethereal password
-                }
-            });
-
-            // setup email data with unicode symbols
-            let mailOptions = {
-                from: '"DoNotDisclose" <info@DoNotDisclose.com>', // sender address
-                to: 'pietergunst@gmail.com', // list of receivers
-                subject: 'Your NDA from DoNotDisclose.com', // Subject line
-                text: 'Your NDA from DoNotDisclose.com', // plain text body
-                html: '<b>Your NDA is attached to this email</b>', // html body
-                // An array of attachments
-                attachments: [
-                    // File Stream attachment
-                    {
-                        filename: 'nda.docx',
-                        path: __dirname + '/nda.docx',
-                        cid: 'nyan@example.com' // should be as unique as possible
-                    }
-                ]                
-            };
-
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    return console.log(error);
-                }
-                console.log('Message sent: %s', info.messageId);
-                // Preview only available when sending through an Ethereal account
-                var email_url = nodemailer.getTestMessageUrl(info);
-                setTimeout(function(){
-                    var actionurl = email_url
-                    var card = new builder.ThumbnailCard(session)
-                            .title("Download your NDA")
-                            .text("I am not able to send emails yet. Click this link to see your NDA.")
-                            .images([
-                                 builder.CardImage.create(session, "https://s3.amazonaws.com/production.lawgives.com/ep/55/f9/55f9f979e4a99419fb000007.jpeg")
-                            ])
-                            // .tap(builder.CardAction.openUrl(session, "https://www.legal.io/intake/new?summary=" + session.dialogData.title + "&location=" + location_uri + ""))
-                            .buttons([
-                                builder.CardAction.openUrl(session, actionurl, "View NDA")
-                            ]);
-                    var msg = new builder.Message(session).attachments([card]);
-                    session.send(msg);
-                }, 4000);
-                // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
-                // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-            });
-
-
-
-        });
-
-
-
     }
 ]);
 
@@ -317,8 +251,8 @@ bot.dialog('Mutual', [
         doc.setData({
             company_name: session.userData.name,
             address: session.userData.address,
-            time: session.dialogData.time
-
+            time: session.dialogData.time.toString(0,10).substring(0,10),
+            description: 'New Website'
         });
 
         try {
@@ -345,69 +279,28 @@ bot.dialog('Mutual', [
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
-        nodemailer.createTestAccount((err, account) => {
-
-            // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-                host: 'smtp.postmarkapp.com',
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                    user: account.user, // generated ethereal user
-                    pass: account.pass  // generated ethereal password
-                }
-            });
-
-            // setup email data with unicode symbols
-            let mailOptions = {
-                from: '"DoNotDisclose" <info@DoNotDisclose.com>', // sender address
-                to: 'pietergunst@gmail.com', // list of receivers
-                subject: 'Your NDA from DoNotDisclose.com', // Subject line
-                text: 'Your NDA from DoNotDisclose.com', // plain text body
-                html: '<b>Your NDA is attached to this email</b>', // html body
-                // An array of attachments
-                attachments: [
-                    // File Stream attachment
-                    {
-                        filename: 'nda.docx',
-                        path: __dirname + '/nda.docx',
-                        cid: 'nyan@example.com' // should be as unique as possible
-                    }
-                ]                
-            };
-
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    return console.log(error);
-                }
-                console.log('Message sent: %s', info.messageId);
-                // Preview only available when sending through an Ethereal account
-                var email_url = nodemailer.getTestMessageUrl(info);
-                setTimeout(function(){
-                    var actionurl = email_url
-                    var card = new builder.ThumbnailCard(session)
-                            .title("Want more options?")
-                            .text("Submit a request online and get contacted by attorneys who can assist.")
-                            .images([
-                                 builder.CardImage.create(session, "https://s3.amazonaws.com/production.lawgives.com/ep/55/f9/55f9f979e4a99419fb000007.jpeg")
-                            ])
-                            // .tap(builder.CardAction.openUrl(session, "https://www.legal.io/intake/new?summary=" + session.dialogData.title + "&location=" + location_uri + ""))
-                            .buttons([
-                                builder.CardAction.openUrl(session, actionurl, "Get Started")
-                            ]);
-                    var msg = new builder.Message(session).attachments([card]);
-                    session.send(msg);
-                }, 4000);
-                // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
-                // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-            });
 
 
-
+ 
+        client.sendEmailWithTemplate({
+            "From": "info@legal.io", 
+            "To": session.userData.email, 
+            "TemplateModel": {
+            },
+            "TemplateId": 3892923,
+            "Attachments": [{
+              // Reading synchronously here to condense code snippet: 
+              "Content": fs.readFileSync(__dirname + '/nda.docx').toString('base64'),
+              "Name": "nda.docx",
+              "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            }]
+        }, function(error, result) {
+            if(error) {
+                console.error("Unable to send via postmark: " + error.message);
+                return;
+            }
+            console.info("Sent to postmark for delivery")
         });
-
-
 
     }
 ]);
