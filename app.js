@@ -230,7 +230,7 @@ bot.dialog('Mutual', [
     },
     function (session, results) {
         session.userData.email = results.response;
-        session.send("Okay, I’m generating the unilateral NDA. You’ll receive an email with this document shortly.");
+        session.send("Okay, I’m generating the mutual NDA. You’ll receive an email with this document shortly.");
         mixpanel.track("Workflow Completed"), {
                 "Bot": "NDA",
                 "Type": "Mutual"
@@ -287,7 +287,7 @@ bot.dialog('Mutual', [
             "TemplateId": 3892923,
             "Attachments": [{
               // Reading synchronously here to condense code snippet: 
-              "Content": fs.readFileSync(__dirname, '/nda-mutual-' + session.userData.email +'.docx').toString('base64'),
+              "Content": fs.readFileSync(__dirname + '/nda-mutual-' + session.userData.email +'.docx').toString('base64'),
               "Name": 'nda-mutual-' + session.userData.email +'.docx',
               "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }]
